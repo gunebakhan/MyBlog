@@ -1,0 +1,19 @@
+{% extends 'blog/base.html' %}
+
+{% block card %}
+{% for post in posts %}
+<div class="card flex-md-row  box-shadow h-md-250">
+    <img class="card-img-right flex-auto d-none d-md-block" src="{{post.image.url}}" alt="Card image cap"
+        style="width: 15vw;height: 15vw;object-fit: cover;">
+    <div class="card-body d-flex flex-column align-items-start">
+        <strong class="d-inline-block mb-2 text-primary"> <a href="{% url 'cat_archives' post.category.slug %}">{{post.category.title}}</a> </strong>
+        <h4 class="mb-0">
+            <a class="text-dark" href="{% url 'post_single' post.slug %}"> {{post.title}} </a>
+        </h4>
+        <div class="mb-1 text-muted"> {{post.publish_time}} </div>
+        <p class="card-text mb-auto"> {{post.content|truncatewords:20}} </p>
+        <a href="{% url 'post_single' post.slug %}">ادامه ...</a>
+    </div>
+</div>
+{% endfor %}
+{% endblock card %}
