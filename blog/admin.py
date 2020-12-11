@@ -77,7 +77,7 @@ class PostChildrenItemInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('slug', 'title', 'parent')
+    list_display = ('title', 'slug', 'parent')
     search_fields = ('slug', 'title')
     list_filter = ('parent',)
     inlines = [CategoryChildrenItemInline, PostChildrenItemInline]

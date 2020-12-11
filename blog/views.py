@@ -7,8 +7,6 @@ from .models import Post, Category, Comment
 # Create your views here.
 def home(request):
     categories = Category.objects.all()
-    # iphone = Post.objects.filter(category__slug='iphone').first()
-    # microsoft = Post.objects.filter(category__slug='windows10').first()
     posts = Post.objects.all()
     post_dates = Post.objects.dates('publish_time', 'month', order='DESC')
 
@@ -50,7 +48,7 @@ def single(request, slug):
         'comments': comments,
         'logged': logged
     }
-    # print(comments.values())
+
     return render(request, 'blog/post_single.html', context)
 
 

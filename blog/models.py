@@ -24,7 +24,7 @@ class Category(models.Model):
 class Post(models.Model):
 
     title = models.CharField(_("Title"), max_length=128)
-    slug = models.SlugField(_("Slug"), db_index=True, unique=True)
+    slug = models.SlugField(_("Slug"), db_index=True, unique=True, unique_for_date='publish_time')
     content = models.TextField(_("Content"))
     create_at = models.DateTimeField(_("Create at"), auto_now=False, auto_now_add=True)
     update_at = models.DateTimeField(_("Update at"), auto_now=True, auto_now_add=False)
