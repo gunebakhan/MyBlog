@@ -94,7 +94,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         validators=[email_validator],
         error_messages={
             'unique': _("A user with that email already exists."),
-        })
+        },
+        unique=True)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
