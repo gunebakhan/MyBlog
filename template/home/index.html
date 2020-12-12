@@ -40,7 +40,11 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">درباره ما</a>
+                   {% if not logged %}
+                       <a class="nav-link" href="{% url 'login' %}" tabindex="-1" aria-disabled="true">وارد شوید</a>
+                   {% else %}
+                      <a class="nav-link" href="{% url 'logout' %}" tabindex="-1" aria-disabled="true">خارج شوید</a>
+                   {% endif %}
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
@@ -68,11 +72,11 @@
                     <div class="card-body d-flex flex-column align-items-start">
                         <strong class="d-inline-block mb-2 text-primary"> <a href="{% url 'cat_archives' post.category.slug %}">{{post.category.title}}</a> </strong>
                         <h4 class="mb-0">
-                            <a class="text-dark" href="{% url 'post_single' post.slug %}"> {{post.title}} </a>
+                            <a class="text-dark" href="{{ post.get_absolute_url }}"> {{post.title}} </a>
                         </h4>
                         <div class="mb-1 text-muted"> {{post.publish_time}} </div>
                         <p class="card-text mb-auto"> {{post.content|truncatewords:20}} </p>
-                        <a href="{% url 'post_single' post.slug %}">ادامه ...</a>
+                        <a href="{{ post.get_absolute_url }}">ادامه ...</a>
                     </div>
                 </div>
                 {% endfor %}

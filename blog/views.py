@@ -29,7 +29,7 @@ def home(request):
 
 
 
-def single(request, slug):
+def single(request, category, slug):
     categories = Category.objects.all()
     try:
         post = Post.objects.select_related('post_setting').get(slug=slug)
@@ -46,7 +46,7 @@ def single(request, slug):
         'categories': categories,
         'settings': post.post_setting,
         'comments': comments,
-        'logged': logged
+        'logged': logged,
     }
 
     return render(request, 'blog/post_single.html', context)

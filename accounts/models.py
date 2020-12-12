@@ -122,7 +122,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _("Users")
 
     def __str__(self):
-        return self.get_username()
+        return self.get_full_name()
 
     def clean(self):
         super().clean()

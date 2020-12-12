@@ -1,4 +1,9 @@
 {% extends 'blog/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/post_single.css' %}">
+{% endblock css %}
 
 {% block card %}
 <div class="bg-white p-2">
@@ -23,7 +28,7 @@
         </div>
         <div class="form-group">
             <label for="commentController">نظر خود را وارد بنویسید.</label>
-            <textarea class="form-control" id="commentController" rows="3"></textarea>
+            <textarea class="form-control" id="commentController" rows="3" style="resize:none;"></textarea>
           </div>
           <button type="submit" class="btn btn-primary">ارسال</button>
         </form>
@@ -37,10 +42,15 @@
                 </div>
                 <p>{{comment.content}}</p>
                 <i class="fas fa-thumbs-up ml-2" style="cursor: pointer;"></i> |
-                <i class="fa fa-thumbs-down mx-2" style="cursor: pointer;"></i>
+                <i class="fa fa-thumbs-down mx-2" style="cursor: pointer;" id=""></i>
+                <hr>
             {% endfor %}
         </div>
     {% endif %}
 </div>
 
 {% endblock card %}
+
+{% block javascript %}
+    <script src="{% static 'js/post_single.js' %}"></script>
+{% endblock javascript %}

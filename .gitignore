@@ -1,2 +1,4 @@
 db.sqlite3
 media
+blog/__pycache__/*.pyc
+MyBlog/__pycache__/*.pyc

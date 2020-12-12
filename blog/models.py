@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+
 
 User = get_user_model()
 
@@ -40,6 +42,10 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+    def get_absolute_url(self):
+        return reverse("post_single", args=[self.category.slug, self.slug])
 
 
 

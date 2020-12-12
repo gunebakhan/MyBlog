@@ -1,0 +1,59 @@
+{% extends 'blog/base.html' %}
+
+{% block login %}
+    <div class="row" style="height=100vw">
+        <div class="col-md-6 offset-md-3 shadow p-3 my-5 bg-white rounded">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% for error in form.non_field_errors %}
+                    <div class="text-danger form-group {% if form.non_field_errors %} has-error {% endif %}">{{ error }}</div>
+                {% endfor %}
+                <div class="text-danger form-group {% if form.username.errors %} has-error {% endif %}">
+                    {{ form.username }} 
+                    {% for error in form.username.errors %}
+                      {{ error }}
+                    {% endfor %}
+                </div>
+        
+                <div class="text-danger form-group {% if form.password.errors %} has-error {% endif %}">
+                    {{ form.password }}
+                    {% for error in form.password.errors %}
+                      {{ error }}
+                    {% endfor %}
+                </div>
+                <button type="submit" class='btn btn-success w-100'>ورود به سایت</button>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                    <label class="form-check-label" for="defaultCheck1">
+                        من را به خاطر بسپار.
+                    </label>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock login %}
+
+{% block card %}
+{% endblock card %}
+
+     <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+          <div class="form-group {% if form.non_field_errors %} has-error {% endif %}">{{ error }}</div>
+        {% endfor %}
+
+        <div class="form-group {% if form.username.errors %} has-error {% endif %}">
+            {{ form.username }} 
+            {% for error in form.username.errors %}
+              {{ error }}
+            {% endfor %}
+        </div>
+
+        <div class="form-group {% if form.password.errors %} has-error {% endif %}">
+            {{ form.password }}
+            {% for error in form.password.errors %}
+              {{ error }}
+            {% endfor %}
+        </div>
+        <input type="submit" value="Login" class="btn btn-primary pull-right" />
+      </form>

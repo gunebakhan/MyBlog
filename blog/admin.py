@@ -14,7 +14,7 @@ class PostItemInline(admin.StackedInline):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug', 'create_at', 'update_at', 'publish_time', 'draft', 'category', 'author')
+    list_display = ('title', 'slug', 'publish_time', 'draft', 'category', 'author')
     date_hierarchy = 'publish_time'
     lisdt_filter = ('author',)
     inlines = [PostItemInline]
