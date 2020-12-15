@@ -4,6 +4,7 @@ from .forms import LoginForm
 
 # Create your views here.
 def login_view(request):
+    alert = False
     if request.user.is_authenticated:
         return redirect('home')
     logged = False
@@ -19,10 +20,13 @@ def login_view(request):
                 logged = True
                 login(request, user)
                 return redirect('home')
+            else:
+                alert = True
+            
     else:
         form = LoginForm()
 
-    return render(request, 'registration/login.html', {'form': form, 'logged': logged})
+    return render(request, 'registration/login.html', {'form': form, 'logged': logged, 'alert': alert})
 
 
 def logout_view(request):

@@ -1,9 +1,15 @@
 {% extends 'blog/base.html' %}
 
 {% block login %}
-    <div class="row" style="height=100vw">
-        <div class="col-md-6 offset-md-3 shadow p-3 my-5 bg-white rounded">
-            <form action="" method="post">
+    <div class="d-flex justify-content-center"  style="height: 40vw;">
+        <div class="shadow bg-white rounded px-5 d-flex align-items-center row">
+            {% if alert %}
+              <p class="alert alert-danger col-sm-12" role="alert">
+                یوزر پسورد اشتباه وارد کردید.
+              </p>
+            {% endif %}
+            <br>
+            <form action="" method="post" class="col-sm-12">
                 {% csrf_token %}
                 {% for error in form.non_field_errors %}
                     <div class="text-danger form-group {% if form.non_field_errors %} has-error {% endif %}">{{ error }}</div>

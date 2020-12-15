@@ -16,7 +16,7 @@ class LoginForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({'class':'form-control form-text','placeholder':'نام کاربری را وارد کنید'})
+        self.fields['username'].widget.attrs.update({'class':'form-control form-text bg-su','placeholder':'نام کاربری را وارد کنید'})
         self.fields['password'].widget.attrs.update({'class':'form-control','placeholder':'رمز عبور را وارد کنید', 'id': 'exampleInputPassword1'})
     
 
@@ -39,4 +39,5 @@ class LoginForm(forms.Form):
 
 
     
-    
+
+
