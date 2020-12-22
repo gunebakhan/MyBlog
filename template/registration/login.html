@@ -37,12 +37,25 @@
             </form>
         </div>
     </div>
+    <div class="col-10 ml-auto>
+   {% if messages %}
+       {% for message in messages %}
+          <div class="row justify-content-end">
+             <div class="col-4 text-center">
+                 <div class="alert alert-{{message.tags}}">
+                         {{ message }}
+                 </div>
+              </div>
+           </div>
+        {% endfor %}
+   {% endif%}
+</div>
 {% endblock login %}
 
 {% block card %}
 {% endblock card %}
 
-     <form method="post" action="{% url 'login' %}">
+     {% comment %} <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
         {% for error in form.non_field_errors %}
           <div class="form-group {% if form.non_field_errors %} has-error {% endif %}">{{ error }}</div>
@@ -62,4 +75,4 @@
             {% endfor %}
         </div>
         <input type="submit" value="Login" class="btn btn-primary pull-right" />
-      </form>
+      </form> {% endcomment %}

@@ -1,8 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
+from django.contrib.auth.views import LoginView
+from django.contrib.messages.views import SuccessMessageMixin
+
 
 # Create your views here.
+class AdminLogin(SuccessMessageMixin, LoginView):
+    template_name = 'registration/login.html'
+    success_message = 'Welcome to your profile'
+    
+
+
+
 def login_view(request):
     alert = False
     if request.user.is_authenticated:

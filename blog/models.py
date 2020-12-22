@@ -89,7 +89,7 @@ class Comment(models.Model):
     is_confirmed = models.BooleanField(_("Confirm"))
     create_at = models.DateTimeField(_("Create at"), auto_now=False, auto_now_add=True)
     update_at = models.DateTimeField(_("Update at"), auto_now=True, auto_now_add=False)
-    parent = models.ForeignKey("blog.Comment", verbose_name=_("Relpy"), on_delete=models.CASCADE, related_name='replies', related_query_name='replies', null=True)    
+    parent = models.ForeignKey("blog.Comment", verbose_name=_("Relpy"), on_delete=models.CASCADE, related_name='replies', related_query_name='replies', null=True, blank=True)    
 
 
     class Meta:
