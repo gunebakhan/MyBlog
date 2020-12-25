@@ -1,0 +1,57 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block login %}
+       <div class="jumbotron bg-dark text-white">
+            <h1 class="display-4">سلام همکلاسی</h1>
+            <p class="lead">به وبلاگ اخبار دیجیتال من خوش آمدی!</p>
+            <hr class="my-4">
+            <p>در این وبلاگ آزمایشی آنچه را که از بوتکمپ جنگو آموزش دیده ام را پیاده خواهم کرد.</p>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-8">
+                {% for post in post_list %}
+                <div class="card flex-md-row  box-shadow h-md-250">
+                    <img class="card-img-right flex-auto d-none d-md-block" src="{{post.image.url}}"
+                        alt="Card image cap" style="width: 15vw;height: 15vw;object-fit: cover;">
+                    <div class="card-body d-flex flex-column align-items-start">
+                        <strong class="d-inline-block mb-2 text-primary"> <a href="{% url 'cat_archives' post.category.slug %}">{{post.category.title}}</a> </strong>
+                        <h4 class="mb-0">
+                            <a class="text-dark" href="{{ post.get_absolute_url }}"> {{post.title}} </a>
+                        </h4>
+                        <div class="mb-1 text-muted"> {{post.publish_time}} </div>
+                        <p class="card-text mb-auto"> {{post.content|truncatewords:20}} </p>
+                        <a href="{{ post.get_absolute_url }}">ادامه ...</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4">
+                {% for date in post_dates %}
+                    <a href="{{date.year}}/{{date.month}}">{{date|date:"M"}} {{date|date:"Y"}}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <div class="pagination">
+      <span class="step-links">
+          {% if page_obj.has_previous %}
+              <a href="?page=1">&laquo; first</a>
+              <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+          {% endif %}
+
+          <span class="current">
+              Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+
+          {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}">next</a>
+              <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+          {% endif %}
+      </span>
+    </div>
+{% endblock login %}

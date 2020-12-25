@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.contrib import messages
-from .models import Post, PostSetting, Comment, CommentLike, Category
+from .models import Post, PostSetting, Comment, Category
 from django.utils.translation import ungettext
+from mptt.admin import MPTTModelAdmin
+
 
 # Register your models here.
 class PostItemInline(admin.StackedInline):
@@ -84,12 +86,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 
-@admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ('post', 'is_confirmed', 'author',
-                    'like_count', 'dislike_count')
-    search_fields = ('content',)
-    list_filter = ('is_confirmed',)
-    date_hierarchy = 'create_at'
+admin.site.register(Comment, MPTTModelAdmin)
+
  
-admin.site.register(CommentLike)
+# admin.site.register(CommentLike)

@@ -35,9 +35,5 @@ class LoginForm(forms.Form):
         if len(data) < 7:
             raise forms.ValidationError("طول رمز عبور باید بزگتر از 7 کاراکتر باشد.", code='invalid')
         return data
-    
-
-
-    
 
 

@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-
+from mptt.models import MPTTModel, TreeForeignKey
 
 User = get_user_model()
 
@@ -25,6 +25,12 @@ class Category(models.Model):
 
 class Post(models.Model):
 
+    class NewManager(models.Manager):
+        def get_queryset(self):
+            return super().get_queryset().filter(draft=False)
+
+    objects = models.Manager()
+    newManager = NewManager()
     title = models.CharField(_("Title"), max_length=128)
     slug = models.SlugField(_("Slug"), db_index=True, unique=True, unique_for_date='publish_time')
     content = models.TextField(_("Content"))
@@ -46,6 +52,7 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse("post_single", args=[self.category.slug, self.slug])
+        # return reverse("post_single", args=[self.slug])
 
 
 
@@ -64,55 +71,38 @@ class PostSetting(models.Model):
         return self.post.title
 
 
-class CommentLike(models.Model):
+# class CommentLike(models.Model):
 
-    author = models.ForeignKey(User, verbose_name=_("Author"), on_delete=models.CASCADE)
-    comment = models.ForeignKey("blog.Comment", verbose_name=_("Comment"), on_delete=models.CASCADE, related_name='comment_like', related_query_name='comment_like')
-    condition = models.BooleanField(_("Condition"))
-    create_at = models.DateTimeField(_("Create at"), auto_now=False, auto_now_add=True)
-    update_at = models.DateTimeField(_("Update at"), auto_now=True, auto_now_add=False)
+#     author = models.ForeignKey(User, verbose_name=_("Author"), on_delete=models.CASCADE)
+#     comment = models.ForeignKey("blog.Comment", verbose_name=_("Comment"), on_delete=models.CASCADE, related_name='comment_like', related_query_name='comment_like')
+#     condition = models.BooleanField(_("Condition"))
+#     create_at = models.DateTimeField(_("Create at"), auto_now=False, auto_now_add=True)
+#     update_at = models.DateTimeField(_("Update at"), auto_now=True, auto_now_add=False)
 
-    class Meta:
-        unique_together = [['author', 'comment']]
-        verbose_name = _("CommentLike")
-        verbose_name_plural = _("CommentLikes")
+#     class Meta:
+#         unique_together = [['author', 'comment']]
+#         verbose_name = _("CommentLike")
+#         verbose_name_plural = _("CommentLikes")
 
-    def __str__(self):
-        return str(self.condition)
+#     def __str__(self):
+#         return str(self.condition)
 
 
-class Comment(models.Model):
-
+class Comment(MPTTModel):
+    post = models.ForeignKey(Post, verbose_name=_("Post"), on_delete=models.CASCADE, related_name="comments")
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_query_name='children')
+    # author = models.ForeignKey(User, verbose_name=_("Author"), on_delete=models.CASCADE, related_query_name='comments')
+    name = models.CharField(_("Name"), max_length=50)
+    email = models.EmailField(_("Email"), max_length=254)
     content = models.TextField(_("Content"))
-    post = models.ForeignKey("blog.Post", verbose_name=_("Post"), on_delete=models.CASCADE, related_name="post_comment", related_query_name="post_comment")
-    author = models.ForeignKey(User, verbose_name=_("Author"), on_delete=models.CASCADE)
-    is_confirmed = models.BooleanField(_("Confirm"))
-    create_at = models.DateTimeField(_("Create at"), auto_now=False, auto_now_add=True)
-    update_at = models.DateTimeField(_("Update at"), auto_now=True, auto_now_add=False)
-    parent = models.ForeignKey("blog.Comment", verbose_name=_("Relpy"), on_delete=models.CASCADE, related_name='replies', related_query_name='replies', null=True, blank=True)    
+    publish = models.DateTimeField(_("Publish"), auto_now=False, auto_now_add=True)
+    status = models.BooleanField(_("Status"), default=True)
 
-
-    class Meta:
-        verbose_name = _("Comment")
-        verbose_name_plural = _("Comments")
-        ordering = ['-create_at']
-
-
+    class MPTTMeta:
+        order_insertion_by = ['publish']
+    
     def __str__(self):
-        return self.content
-    
-
-    @property
-    def like_count(self):
-        counts = CommentLike.objects.filter(comment=self, condition=True).count()
-        return  counts
-    
-
-    @property
-    def dislike_count(self):
-        # counts = CommentLike.objects.filter(comment=self, condition=False).count()
-        counts = self.comment_like.filter(condition=False).count()
-        return counts
+        return f"Comment by {self.name}"
 
 
 

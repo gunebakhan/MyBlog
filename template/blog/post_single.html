@@ -17,40 +17,136 @@
     </p>
 
     {% if settings.allow_discussion %}
-    <form class="border-top border-3 mt-5 mb-2" style="border-width: 3px !important;">
-        <div class="form-group">
-            <label for="nameController" class="mt-5">نام خود را وارد کنید.</label>
-            <input type="text" class="form-control" id="nameController" placeholder="نام و نام خانوادگی">
-          </div>
-        <div class="form-group">
-          <label for="emailController">ایمیل خود را وارد کنید.</label>
-          <input type="email" class="form-control" id="emailController" placeholder="name@example.com">
-        </div>
-        <div class="form-group">
-            <label for="commentController">نظر خود را وارد بنویسید.</label>
-            <textarea class="form-control" id="commentController" rows="3" style="resize:none;"></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">ارسال</button>
-        </form>
+        {% if request.user.is_authenticated %}
+            <h2>نظرتان را اینجا بنویسید</h2>
+            <form id="myForm" method="post" >
+                {{comment_form.as_p}}
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary btn-lg btn-block">ارسال</button>
+            </form>
+        {% endif %}
     {% endif %}
     {% if settings.comment %}
-        <div class="border-top border-3 mt-5 border-primary" style="border-width: 3px !important;">
-            {% for comment in comments %}
-                <div class="d-flex mgt-2">
-                    <small class="ml-2"> {{comment.author}} </small> |
-                    <small class="mx-2">{{comment.update_at}}</small>
+        {% with allcomments.count as total_comments%}
+            {{total_comments}} نظر{{total_comments|pluralize}}
+        {% endwith %}
+
+        {% load mptt_tags %}    
+        <div>
+            {% recursetree page_comments %}
+            <div id="{{node.id}}" class="my-2 p-2" style="border: 1px solid grey">
+                <div class="d-flex justify-content-between">
+                    <div><small>{{node.name}}</small></div>
+                    <div><small>{{node.publish}}</small></div>
                 </div>
-                <p>{{comment.content}}</p>
-                <i class="fas fa-thumbs-up ml-2" style="cursor: pointer;"></i> |
-                <i class="fa fa-thumbs-down mx-2" style="cursor: pointer;" id=""></i>
+                <span class="badge badge-success" id="like_{{node.id}}">Likes</span>
+                <span class="badge badge-danger" id="dislike_{{node.id}}">Dislikes</span>
+                <div class="text-dark">{{ node.content }}</div>
+
+
+                <button class="btn btn-outline-success" onclick="like({{node.id}}, 'like')">Like</button>
+                <button class="btn btn-outline-danger" onclick="like({{node.id}}, 'dislike')">Dislike</button>
+
                 <hr>
-            {% endfor %}
+                {% if node.level < 4 %}
+                    <button class="btn btn-success" onclick="myFunction({{ node.id }})">جواب</button>
+                {% endif %}
+            
+                {% if not node.is_lead_node %}
+                <div class="children pl-2 -l-md-5">
+                    {{children}}
+                </div>
+            </div>
+            {% endif %}
+            {% endrecursetree %}
         </div>
+
+        <div class="py-4">
+        <nav aria-label="Page navigation example">
+          {% if page_comments.has_other_pages %}
+          <ul class="pagination">
+            {% if page_comments.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_comments.previous_page_number }}">قبلی</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">قبلی</a></li>
+            {% endif %}
+            {% for num in page_comments.paginator.page_range %}
+            {% if page_comments.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }} <span class="sr-only">(current)</span></span>
+            </li>
+            {% else %}
+            <li><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if page_comments.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_comments.next_page_number }}">بعدی</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">بعدی</a></li>
+            {% endif %}
+          </ul>
+          {% endif %}
+        </nav>
+      </div>
     {% endif %}
 </div>
 
 {% endblock card %}
 
 {% block javascript %}
-    <script src="{% static 'js/post_single.js' %}"></script>
+<script>
+    function myFunction(id) { 
+      if (document.contains(document.getElementById("newForm"))) {
+        document.getElementById("newForm").remove();
+      }
+
+      var a = document.getElementById(id);
+      a.insertAdjacentHTML('afterend', `
+      <form class="form-insert py-2" id="newForm" method="post">
+      <div class="d-flex justify-content-between">
+      <div><h2>جواب:</h2></div>
+      <div><button type="button" class="btn btn-outline-danger" onclick="formExit()">بستن</div>
+      </div>
+      <label for="id_name">نام:</label>
+      <input type="text" name="name" class="col-sm-12" maxlength="50" id="id_name" required="">
+      <select name="parent" id="id_parent" class="d-none">
+        <option value="${id}" selected="${id}" ></option>
+      </select>
+      <label for="id_email">ایمیل</label>
+      <input type="text" name="email" id="id_email" class="col-sm-12" maxlength="254" required="">
+      <label for="id_content">متن:</label>
+      <textarea name="content" id="id_content" cols="40" rows="5" class="form-control" required style="resize: none;"></textarea>
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
+    </form>`);
+    }
+
+    function formExit() {
+      document.getElementById("newForm").remove();
+    }
+    $('#myForm').trigger("reset");
+
+    function like(id, like_type) {
+      $.ajax({
+        type: "post",
+        url: "{% url 'like_comment' %}",
+        data: {
+          id: id,
+          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken').val(),
+          action: 'post',
+        },
+        success: function (json) {
+          json = JSON.parse(json)
+          
+          if (like_type == 'like')
+            e_id = "like_" + json["comment_id"]
+          else  
+            e_id = "dislike_" + json["comment_id"]
+          // element = document.getElementById(e_id);
+          document.getElementById(e_id).innerHTML = json["comment_id"];
+        },
+        error: function() {alert('error in liking')}
+      });
+    }
+  </script>
 {% endblock javascript %}
