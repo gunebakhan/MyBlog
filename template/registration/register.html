@@ -1,0 +1,111 @@
+{% extends 'blog/base.html' %}
+
+{% block css %}
+{% if request.user.is_authenticated %}
+<script>
+    window.location.href = '{% url "login" %}';
+</script>
+{% endif %}
+
+<style>
+    .login,
+    .image {
+        min-height: 100vh;
+    }
+
+    .bg-image {
+        background-image: url('https://picsum.photos/id/433/1080');
+        background-size: cover;
+        background-position: center center;
+    }
+
+    .container-fluid {
+        max-width: 100%;
+    }
+
+    body {
+        margin-bottom: 0px;
+    }
+
+    .account-form input {
+        border: 2px solid #ccc;
+        height: calc(2em + .75rem + 2px);
+    }
+
+    .account-form input:focus {
+        border-color: #1497ff;
+        box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.075), 0 0 0px rgba(255, 0, 0, 0.6);
+    }
+</style>
+{% endblock css %}
+
+{% block login %}
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="col-md-6 bg-light">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-md-12 mx-auto">
+
+                            <form class="account-form p-4 rounded col-lg-10 mx-auto" action="." method="post">
+                                {% csrf_token %}
+                                <p class="h4 mb-2 font-weight-bold">یک حساب جدید بسازید.</p>
+                                <p class="mb-4">ایجاد حساب به آسانی یک لیوان آب خوردن است.</p>
+
+                                {% if form.errors %}
+                                <p>لطفا خظاهای زیر را تصحیح نمایید.</p>
+                                {% for field in form %}
+                                {% if field.errors %}
+                                <div class="alert alert-primary" role="alert">
+                                    {{ field.label }}: {{ field.errors|striptags }}
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                                <label class="small font-weight-bold">{{ form.username.label }}<span class="text-muted">
+                                    (الزامی)</span></label>
+                               {{ form.username }}
+                                <label class="small font-weight-bold">{{ form.email.label}}<span class="text-muted">
+                                        (الزامی)</span></label>
+                                {{ form.email }}
+                                <label class="small font-weight-bold">{{ form.password.label}}<span class="text-muted">
+                                        (الزامی)</span></label>
+                                {{ form.password }}
+                                <small class="form-text text-muted mb-4">
+                                    حداقل 8 کاراکتر و 1 عدد صحیح
+                                </small>
+                                {{ form.password2 }}
+                                <small class="form-text text-muted mb-4">
+                                    تکرار رمز عبور
+                                </small>
+
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="Newsletter">
+                                    <label class="custom-control-label" for="Newsletter">
+                                       عضویت در خبرنامه</label>
+                                </div>
+
+                                <button class="btn btn-primary btn-block py-2 mb-4 mt-5 font-weight-bold"
+                                    type="submit">ثبت نام</button>
+
+                                <hr class="mb-3">
+                                <p class="small text-center">با کلیک روی ثبت نام به طور ضمنی با <a href="">قوانین و سرویسها</a> موافقت نموده اید.
+                                </p>
+                            </form>
+
+                            <p class="small text-center pt-4">
+                                <a href="{% url "login" %}">حساب کاربری دارید؟</a>
+                            </p>
+                            <p class="small text-center">
+                                <a href="{% url "register" %}">به کمک نیاز دارید؟</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 d-none d-md-flex bg-image"></div>
+    </div>
+</div>
+{% endblock login %}

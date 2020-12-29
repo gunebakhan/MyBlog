@@ -13,6 +13,7 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.db.models import Q
 import json
+from .models import CommentLike
 
 
 # Create your views here.
@@ -81,6 +82,24 @@ def post_single(request, category, slug):
     allcomments = post.comments.filter(status=True)
     page = request.GET.get('page', 1)
     paginator = Paginator(allcomments, 6)
+    # likes = CommentLike.objects.filter(condition=True).count()
+    # dislikes = CommentLike.objects.filter(condition=False).count()
+    likes = {}
+    dislikes = {}
+    author_likes = {}
+    author_dislikes = {}
+    
+    # print(request.user)
+    for comment in allcomments:
+        likes[comment.id] = CommentLike.objects.filter(comment=comment, condition=True).count()
+        dislikes[comment.id] = CommentLike.objects.filter(comment=comment, condition=False).count()
+
+    if request.user.is_authenticated:
+        for comment in allcomments:
+            author_likes[comment.id] = CommentLike.objects.filter(comment=comment, condition=True, author=request.user)
+            author_dislikes[comment.id] = CommentLike.objects.filter(comment=comment, condition=False, author=request.user)
+
+    # print(author_likes)
 
     try:
         comments = paginator.page(page)
@@ -108,7 +127,11 @@ def post_single(request, category, slug):
         'comment_form': comment_form,
         'page_comments': comments,
         'settings': post.post_setting,
-        'allcomments': allcomments
+        'allcomments': allcomments,
+        'likes': likes,
+        'dislikes': dislikes,
+        'author_likes': author_likes,
+        'author_dislikes': author_dislikes
     }
 
     return render(request, 'blog/post_single.html', context)

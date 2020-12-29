@@ -69,6 +69,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'blog.views.categories'
             ],
+            'libraries': {
+                'my_tags': 'templatestags.my_tags'
+            }
         },
     },
 ]
@@ -136,3 +139,7 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # URL redirecting after a successful authentication
 LOGIN_REDIRECT_URL = 'home' 
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

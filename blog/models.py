@@ -71,21 +71,21 @@ class PostSetting(models.Model):
         return self.post.title
 
 
-# class CommentLike(models.Model):
+class CommentLike(models.Model):
 
-#     author = models.ForeignKey(User, verbose_name=_("Author"), on_delete=models.CASCADE)
-#     comment = models.ForeignKey("blog.Comment", verbose_name=_("Comment"), on_delete=models.CASCADE, related_name='comment_like', related_query_name='comment_like')
-#     condition = models.BooleanField(_("Condition"))
-#     create_at = models.DateTimeField(_("Create at"), auto_now=False, auto_now_add=True)
-#     update_at = models.DateTimeField(_("Update at"), auto_now=True, auto_now_add=False)
+    author = models.ForeignKey(User, verbose_name=_("Author"), on_delete=models.CASCADE)
+    comment = models.ForeignKey("blog.Comment", verbose_name=_("Comment"), on_delete=models.CASCADE, related_name='comment_like', related_query_name='comment_like')
+    condition = models.BooleanField(_("Condition"))
+    create_at = models.DateTimeField(_("Create at"), auto_now=False, auto_now_add=True)
+    update_at = models.DateTimeField(_("Update at"), auto_now=True, auto_now_add=False)
 
-#     class Meta:
-#         unique_together = [['author', 'comment']]
-#         verbose_name = _("CommentLike")
-#         verbose_name_plural = _("CommentLikes")
+    class Meta:
+        unique_together = [['author', 'comment']]
+        verbose_name = _("CommentLike")
+        verbose_name_plural = _("CommentLikes")
 
-#     def __str__(self):
-#         return str(self.condition)
+    def __str__(self):
+        return str(self.condition)
 
 
 class Comment(MPTTModel):
@@ -106,4 +106,22 @@ class Comment(MPTTModel):
 
 
 
-
+def like_comment(request):
+    
+    if request.POST.get('action') == 'post':
+        comment_id = str(request.POST.get('id'))
+        comment_id = json.loads(comment_id)
+        like_type = str(request.POST.get('like_type'))
+        if like_type == 'like':
+            status = True
+        else:
+            status = False
+        comment = Comment.objects.get(id=comment_id)
+        comment_like = CommentLike(author=user, comment=comment, condition=status)
+        comment_like.save()
+        like_counts = CommentLike.objects.filter(comment=comment, condition=status).count()
+        response = {'like_counts': like_counts}
+        response = json.dumps(response)
+        return HttpResponse(response, status=201)
+    
+    return HttpResponse(json.dumps({'comment_id': -1}))

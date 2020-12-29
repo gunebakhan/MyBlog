@@ -1,0 +1,7 @@
+{% autoescape off %}
+سلام {{ user.username }},
+
+حساب شما با مواقیت ساخته شد. لطفا با کلیک بر روی لینک زیر حساب خود را فعال نمایید.
+
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+{% endautoescape %}

@@ -1,0 +1,40 @@
+{% extends 'blog/base.html' %}
+
+{% block css %}
+
+<style>
+.container{
+    padding:5%;
+}
+.container .img{
+    text-align:center;
+}
+.container .details{
+    border-left:3px solid #ded4da;
+}
+.container .details p{
+    font-size:15px;
+    font-weight:bold;
+}
+</style>
+{% endblock css %}
+
+{% block login %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 img">
+      <img src="{{request.user.avatar.url}}"  alt="" class="img-rounded img-fluid img-thumbnail" style="width: 20vw;">
+    </div>
+    <div class="col-md-6 details">
+      <blockquote>
+        <h5>{{request.user.get_full_name}}</h5>
+        <small><cite title="Source Title">{{request.user.username}} <i class="icon-map-marker"></i></cite></small>
+      </blockquote>
+      <p>
+        {{request.user.email}}
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock login %}

@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
     integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
   {% block css %}
+
   {% endblock css %}
 </head>
 
@@ -43,13 +44,26 @@
             <a class="dropdown-item" href="#">متفرقه</a>
           </div>
         </li>
+        {% if not request.user.is_authenticated %}
         <li class="nav-item">
-          {% if not request.user.is_authenticated %}
           <a class="nav-link" href="{% url 'login' %}" tabindex="-1" aria-disabled="true">وارد شوید</a>
-          {% else %}
-          <a class="nav-link" href="{% url 'logout' %}" tabindex="-1" aria-disabled="true">خارج شوید</a>
-          {% endif %}
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'register' %}" tabindex="-1" aria-disabled="true">ثبت نام کنید</a>
+        </li>
+        {% else %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            تنظیمات کاربری
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{% url 'profile' %}">پروفایل</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'logout' %}">خروج</a>
+          </div>
+        </li>
+        {% endif %}
       </ul>
       <form class="form-inline my-2 my-lg-0" method="get" action="{% url 'search' %}">
         <input class="form-control ml-sm-2" type="search" placeholder="جستجو" aria-label="Search" name="q">
@@ -65,7 +79,7 @@
     <div class="row mb-2">
       <div class="col-md-8">
         {% block card %}
-        <p>چیزی یافت نشد</p>
+      
         {% endblock card %}
       </div>
       <div class="col-md-4">

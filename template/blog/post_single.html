@@ -1,5 +1,7 @@
 {% extends 'blog/base.html' %}
 {% load static %}
+{% load my_tags %}
+
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/post_single.css' %}">
@@ -10,7 +12,7 @@
     <small > <a href="{% url 'cat_archives' post.category.slug %}">{{post.category.title}}</a> </small>
     <h4 class="text-dark">{{post.title}}</h4>
     <small class="d-block">{% if settings.author %} {{post.author}} {% endif %}  </small>
-    <small>{{post.publish_time}}</small>
+    <small>{{post.publish_time|date}}</small>
     <img src="{{post.image.url}}" alt="{{post.category.title}}" class="w-100 my-3">
     <p style="text-align: justify;" class="my-3 text-dark">
         {{post.content}}
@@ -43,7 +45,7 @@
                 <span class="badge badge-danger" id="dislike_{{node.id}}">Dislikes</span>
                 <div class="text-dark">{{ node.content }}</div>
 
-
+                
                 <button class="btn btn-outline-success" onclick="like({{node.id}}, 'like')">Like</button>
                 <button class="btn btn-outline-danger" onclick="like({{node.id}}, 'dislike')">Dislike</button>
 
