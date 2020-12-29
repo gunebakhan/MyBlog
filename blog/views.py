@@ -134,6 +134,8 @@ def post_single(request, category, slug):
         'author_dislikes': author_dislikes
     }
 
+    print(context)
+
     return render(request, 'blog/post_single.html', context)
 
 
@@ -221,14 +223,20 @@ def search(request):
 
 def like_comment(request):
     user = request.user
-    print(request)
     if request.POST.get('action') == 'post':
         comment_id = str(request.POST.get('id'))
         comment_id = json.loads(comment_id)
-        print(comment_id)
-        response = {'comment_id': comment_id}
+        like_type = str(request.POST.get('like_type'))
+        if like_type == 'like':
+            status = True
+        else:
+            status = False
+        comment = Comment.objects.get(id=comment_id)
+        comment_like = CommentLike(author=user, comment=comment, condition=status)
+        comment_like.save()
+        like_counts = CommentLike.objects.filter(comment=comment, condition=status).count()
+        response = {'like_counts': like_counts}
         response = json.dumps(response)
-        print(response)
         return HttpResponse(response, status=201)
     
-    return JsonResponse({'comment_id': -1})
+    return HttpResponse(json.dumps({'comment_id': -1}))

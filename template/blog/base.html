@@ -40,8 +40,7 @@
             {% for category in categories %}
             <a class="dropdown-item" href="{% url 'cat_archives' category.slug %}"> {{category.title}} </a>
             {% endfor %}
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">متفرقه</a>
+
           </div>
         </li>
         {% if not request.user.is_authenticated %}

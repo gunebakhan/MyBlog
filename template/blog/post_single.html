@@ -30,24 +30,37 @@
     {% endif %}
     {% if settings.comment %}
         {% with allcomments.count as total_comments%}
-            {{total_comments}} نظر{{total_comments|pluralize}}
+            {{total_comments}} نظر
         {% endwith %}
 
         {% load mptt_tags %}    
-        <div>
+        <div class="pt-5">
             {% recursetree page_comments %}
             <div id="{{node.id}}" class="my-2 p-2" style="border: 1px solid grey">
                 <div class="d-flex justify-content-between">
                     <div><small>{{node.name}}</small></div>
-                    <div><small>{{node.publish}}</small></div>
+                    <div><small>{{node.publish|date}}</small></div>
                 </div>
-                <span class="badge badge-success" id="like_{{node.id}}">Likes</span>
-                <span class="badge badge-danger" id="dislike_{{node.id}}">Dislikes</span>
+                <span class="badge badge-success my-3" id="like_{{node.id}}">Likes {{likes|get_item:node.id}} </span>
+                <span class="badge badge-danger m-3" id="dislike_{{node.id}}">Dislikes {{dislikes|get_item:node.id}} </span>
                 <div class="text-dark">{{ node.content }}</div>
 
                 
-                <button class="btn btn-outline-success" onclick="like({{node.id}}, 'like')">Like</button>
-                <button class="btn btn-outline-danger" onclick="like({{node.id}}, 'dislike')">Dislike</button>
+                {% if request.user.is_authenticated %}
+                {% if author_likes|get_item:node.id %}
+                <button class="btn btn-success my-3" id="like_btn_{{node.id}}" onclick="like({{node.id}}, 'like')" disabled>Like</button>
+                <button class="btn btn-outline-danger m-3" id="dislike_btn_{{node.id}}" onclick="like({{node.id}}, 'dislike')" disabled>Dislike</button>
+                {% elif author_dislikes|get_item:node.id %}
+                <button class="btn btn-outline-success my-3" id="like_btn_{{node.id}}" onclick="like({{node.id}}, 'like')" disabled>Like</button>
+                <button class="btn btn-danger m-3" id="dislike_btn_{{node.id}}" onclick="like({{node.id}}, 'dislike')" disabled>Dislike</button>
+                {% else %}
+                <button class="btn btn-outline-success my-3" id="like_btn_{{node.id}}" onclick="like({{node.id}}, 'like')">Like</button>
+                <button class="btn btn-outline-danger m-3" id="dislike_btn_{{node.id}}" onclick="like({{node.id}}, 'dislike')">Dislike</button>
+                {% endif %}
+                {% else %}
+                <button class="btn btn-outline-success my-3" id="like_btn_{{node.id}}" onclick="like({{node.id}}, 'like')">Like</button>
+                <button class="btn btn-outline-danger m-3" id="dislike_btn_{{node.id}}" onclick="like({{node.id}}, 'dislike')">Dislike</button>
+                {% endif %}
 
                 <hr>
                 {% if node.level < 4 %}
@@ -134,18 +147,27 @@
         url: "{% url 'like_comment' %}",
         data: {
           id: id,
+          like_type: like_type,
           csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken').val(),
           action: 'post',
         },
         success: function (json) {
           json = JSON.parse(json)
-          
-          if (like_type == 'like')
-            e_id = "like_" + json["comment_id"]
-          else  
-            e_id = "dislike_" + json["comment_id"]
+          like_counts = json['like_counts']
+          if (like_type == 'like'){
+            e_id = "like_" + id;
+            string = "Like ";
+            document.getElementById("like_btn_" + id).className = "btn btn-success";
+            }
+          else  {
+            e_id = "dislike_" + id;
+            string = "Dislikes ";
+            document.getElementById("dislike_btn_" + id).className = "btn btn-danger";
+          }
           // element = document.getElementById(e_id);
-          document.getElementById(e_id).innerHTML = json["comment_id"];
+          document.getElementById(e_id).innerHTML = string + like_counts;
+          document.getElementById("like_btn_" + id).disabled = true;
+          document.getElementById("dislike_btn_" + id).disabled = true;
         },
         error: function() {alert('error in liking')}
       });
