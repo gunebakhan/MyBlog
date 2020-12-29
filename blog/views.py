@@ -22,7 +22,7 @@ class PostArchiveListView(ListView):
     model = Post
     template_name = 'blog/index.html'
     queryset = Post.objects.all()
-    paginate_by = 5
+    paginate_by = 3
     queryset = Post.newManager.all()
     
     def get_context_data(self, **kwargs):
