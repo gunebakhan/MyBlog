@@ -134,7 +134,7 @@ def post_single(request, category, slug):
         'author_dislikes': author_dislikes
     }
 
-    print(context)
+    # print(context)
 
     return render(request, 'blog/post_single.html', context)
 
@@ -240,3 +240,17 @@ def like_comment(request):
         return HttpResponse(response, status=201)
     
     return HttpResponse(json.dumps({'comment_id': -1}))
+
+
+def add_comment(request):
+    if request.POST.get('action') == 'post':
+        post_id = int(request.POST.get('post_id'))
+        comment = Comment(name=request.POST.get('author'), 
+                        email=request.POST.get('email'),
+                        content=request.POST.get('content'),
+                        post_id=post_id)
+        comment.save()
+        print(comment.publish)
+        counts = Comment.objects.all().count()
+
+        return HttpResponse(json.dumps({'counts': counts}), status=201)
