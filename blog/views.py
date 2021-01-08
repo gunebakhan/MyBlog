@@ -254,3 +254,5 @@ def add_comment(request):
         counts = Comment.objects.all().count()
 
         return HttpResponse(json.dumps({'counts': counts}), status=201)
+
+

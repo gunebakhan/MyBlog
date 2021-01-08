@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'accounts',
     'mptt',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
