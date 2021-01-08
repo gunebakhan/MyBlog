@@ -13,7 +13,7 @@ class PostSerializer(serializers.Serializer):
     publish_time = serializers.DateTimeField()
     draft = serializers.BooleanField()
     image = serializers.ImageField()
-    author_detail = UserSerializer(source='author', read_only=True)
+    # author_detail = UserSerializer(source='author', read_only=True)
     author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     
