@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from mptt.models import MPTTModel, TreeForeignKey
 
+
 User = get_user_model()
 
 
